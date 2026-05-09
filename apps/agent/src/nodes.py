@@ -13,14 +13,14 @@ class ComponentSchema(BaseModel):
     data: Dict[str, Any] = Field(description="Data payload specific to the component type")
 
 class A2UISchema(BaseModel):
-    theme: str = Field(description="Theme to use (cyberpunk, space, fantasy, minimal, hacker)")
+    theme: str = Field(description="Theme to use (cyberpunk, space, fantasy, minimal, hacker, premium_light)")
     layout: str = Field(description="Layout to use (grid, split, focused)")
     components: List[ComponentSchema] = Field(description="List of UI components to render")
 
 def get_llm():
     # langchain-google-genai uses GOOGLE_API_KEY by default, but we'll manually pass it if it's GEMINI_API_KEY
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    return ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
+    return ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=api_key)
 
 def analytics_node(state: AgentState):
     """Analyzes the latest interaction and updates user level/history."""
@@ -95,7 +95,7 @@ def gamification_node(state: AgentState):
     elif new_xp > 50:
         theme = "cyberpunk"
     else:
-        theme = "minimal"
+        theme = "premium_light"
         
     return {"xp": new_xp, "topic": state.get("topic", "Binary Search")} # Pass theme through context if needed
 
@@ -122,8 +122,8 @@ def ui_node(state: AgentState):
     Rules:
     1. ALWAYS include an 'xp_bar' component showing the current XP.
     2. Include a 'concept_card' showing the latest AI response.
-    3. Choose a theme: 'cyberpunk', 'space', 'hacker', 'fantasy', or 'minimal'.
-    4. Provide valid data for the components. 
+    3. Choose a theme: 'premium_light' (default), 'cyberpunk', 'space', 'hacker', 'fantasy', or 'minimal'.
+    4. Provide valid data for the components. Use 'premium_light' for a clean, modern aesthetic matching our landing page.
     """
     
     try:

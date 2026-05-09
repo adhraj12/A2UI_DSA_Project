@@ -7,7 +7,7 @@
 // each component type to a real React component.
 // =============================================
 
-export type ThemeName = 'cyberpunk' | 'space' | 'fantasy' | 'minimal' | 'hacker';
+export type ThemeName = 'cyberpunk' | 'space' | 'fantasy' | 'minimal' | 'hacker' | 'premium_light';
 
 export type LayoutType = 'split' | 'grid' | 'focused' | 'dashboard';
 

@@ -119,6 +119,25 @@ export const themes: Record<ThemeName, ThemeConfig> = {
       xp: '#ffcc00',
     },
   },
+  premium_light: {
+    name: 'premium_light',
+    label: 'Premium Light',
+    colors: {
+      primary: '#6366f1', // Indigo 500
+      secondary: '#a855f7', // Purple 500
+      accent: '#ec4899', // Pink 500
+      background: '#f8fafc', // Slate 50
+      surface: 'rgba(255, 255, 255, 0.85)',
+      surfaceGlow: 'rgba(99, 102, 241, 0.04)',
+      text: '#0f172a', // Slate 900
+      textMuted: '#64748b', // Slate 500
+      border: 'rgba(99, 102, 241, 0.1)',
+      success: '#10b981',
+      danger: '#ef4444',
+      warning: '#f59e0b',
+      xp: '#6366f1',
+    },
+  },
 };
 
 export function getThemeVars(theme: ThemeName): Record<string, string> {

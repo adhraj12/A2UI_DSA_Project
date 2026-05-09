@@ -10,11 +10,17 @@ from src.graph import compiled_graph
 
 app = FastAPI()
 
-
+class FixedLangGraphAGUIAgent(LangGraphAGUIAgent):
+    def dict_repr(self):
+        return {
+            "name": self.name,
+            "description": self.description,
+            "type": "langgraph_agui"
+        }
 
 sdk = CopilotKitRemoteEndpoint(
     agents=[
-        LangGraphAGUIAgent(
+        FixedLangGraphAGUIAgent(
             name="neuroplay_agent",
             description="NeuroPlay Agent",
             graph=compiled_graph

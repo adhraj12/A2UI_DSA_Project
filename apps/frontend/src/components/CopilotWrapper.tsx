@@ -1,12 +1,12 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { CopilotKitProvider } from '@copilotkit/react-core/v2';
+import { CopilotKit } from '@copilotkit/react-core';
 
 export function CopilotWrapper({ children }: { children: ReactNode }) {
   return (
-    <CopilotKitProvider runtimeUrl="/api/copilotkit">
+    <CopilotKit runtimeUrl="/api/copilotkit" agent="neuroplay_agent">
       {children}
-    </CopilotKitProvider>
+    </CopilotKit>
   );
 }

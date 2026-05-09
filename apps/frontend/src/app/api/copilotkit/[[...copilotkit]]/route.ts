@@ -2,21 +2,24 @@ import {
   CopilotRuntime,
   copilotRuntimeNextJSAppRouterEndpoint,
 } from '@copilotkit/runtime';
+import { HttpAgent } from '@ag-ui/client';
 import { NextRequest } from 'next/server';
 
-const runtime = new CopilotRuntime({
-  remoteEndpoints: [
-    {
-      url: process.env.REMOTE_ACTION_URL || 'http://localhost:8133/copilotkit',
-    },
-  ],
+const neuroplay_agent = new HttpAgent({
+  url: 'http://127.0.0.1:8133/copilotkit',
 });
 
-export const POST = async (req: NextRequest) => {
-  const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
-    runtime,
-    endpoint: '/api/copilotkit',
-  });
+const runtime = new CopilotRuntime({
+  agents: {
+    neuroplay_agent,
+  },
+});
 
-  return handleRequest(req);
-};
+const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
+  runtime,
+  endpoint: '/api/copilotkit',
+});
+
+export const GET = handleRequest;
+export const POST = handleRequest;
+export const OPTIONS = handleRequest;

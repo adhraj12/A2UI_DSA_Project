@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import DashboardClient from './DashboardClient';
 
 export default function DashboardPage() {
@@ -14,5 +14,9 @@ export default function DashboardPage() {
     return null; // Or a loading spinner
   }
 
-  return <DashboardClient />;
+  return (
+    <Suspense fallback={null}>
+      <DashboardClient />
+    </Suspense>
+  );
 }
