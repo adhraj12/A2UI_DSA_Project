@@ -1,29 +1,28 @@
 from fastapi import FastAPI
-from copilotkit import CopilotKitRemoteEndpoint, LangGraphAgent
-from copilotkit.routers.fastapi import copilotkit_exit_endpoint
+from copilotkit import CopilotKitRemoteEndpoint, LangGraphAGUIAgent
+from copilotkit.integrations.fastapi import add_fastapi_endpoint
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+from src.graph import compiled_graph
 
 app = FastAPI()
 
-# Placeholder agent for initial setup
-# We will replace this with the 4-agent LangGraph system later.
-class DummyAgent:
-    name = "neuroplay_agent"
-    description = "The main NeuroPlay AI agent."
-    
-    async def run(self, context):
-        pass
+
 
 sdk = CopilotKitRemoteEndpoint(
     agents=[
-        LangGraphAgent(
+        LangGraphAGUIAgent(
             name="neuroplay_agent",
             description="NeuroPlay Agent",
-            agent=DummyAgent() # Replace with actual LangGraph compiled graph later
+            graph=compiled_graph
         )
     ],
 )
 
-copilotkit_exit_endpoint(app=app, sdk=sdk, path="/copilotkit")
+add_fastapi_endpoint(app, sdk, "/copilotkit")
 
 if __name__ == "__main__":
     import uvicorn
