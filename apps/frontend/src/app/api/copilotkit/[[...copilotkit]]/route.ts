@@ -2,10 +2,10 @@ import {
   CopilotRuntime,
   copilotRuntimeNextJSAppRouterEndpoint,
 } from '@copilotkit/runtime';
-import { HttpAgent } from '@ag-ui/client';
+import { LangGraphHttpAgent } from '@copilotkit/runtime/langgraph';
 import { NextRequest } from 'next/server';
 
-const neuroplay_agent = new HttpAgent({
+const neuroplay_agent = new LangGraphHttpAgent({
   url: 'http://127.0.0.1:8133/copilotkit',
 });
 

@@ -1,4 +1,5 @@
 from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import MemorySaver
 from src.state import AgentState
 from src.nodes import analytics_node, learning_node, gamification_node, ui_node
 
@@ -20,4 +21,5 @@ workflow.add_edge("gamification", "ui")
 workflow.add_edge("ui", END)
 
 # 4. Compile the graph
-compiled_graph = workflow.compile()
+checkpointer = MemorySaver()
+compiled_graph = workflow.compile(checkpointer=checkpointer)

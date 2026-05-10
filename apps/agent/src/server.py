@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-from copilotkit import CopilotKitRemoteEndpoint, LangGraphAGUIAgent
-from copilotkit.integrations.fastapi import add_fastapi_endpoint
+from ag_ui_langgraph import LangGraphAgent, add_langgraph_fastapi_endpoint
 from dotenv import load_dotenv
 import os
 
@@ -10,25 +9,13 @@ from src.graph import compiled_graph
 
 app = FastAPI()
 
-class FixedLangGraphAGUIAgent(LangGraphAGUIAgent):
-    def dict_repr(self):
-        return {
-            "name": self.name,
-            "description": self.description,
-            "type": "langgraph_agui"
-        }
-
-sdk = CopilotKitRemoteEndpoint(
-    agents=[
-        FixedLangGraphAGUIAgent(
-            name="neuroplay_agent",
-            description="NeuroPlay Agent",
-            graph=compiled_graph
-        )
-    ],
+agent = LangGraphAgent(
+    name="neuroplay_agent",
+    description="NeuroPlay gamified learning agent.",
+    graph=compiled_graph
 )
 
-add_fastapi_endpoint(app, sdk, "/copilotkit")
+add_langgraph_fastapi_endpoint(app, agent, "/copilotkit")
 
 if __name__ == "__main__":
     import uvicorn

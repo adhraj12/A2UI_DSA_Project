@@ -19,7 +19,7 @@ export default function DashboardClient() {
   }, [context]);
 
   const { state } = useCoAgent<{ current_schema?: A2UISchema }>({
-    name: 'default',
+    name: 'neuroplay_agent',
     initialState: {},
   });
 
@@ -30,10 +30,12 @@ export default function DashboardClient() {
     const topic = searchParams.get('topic');
     if (topic && !hasTriggered.current) {
       hasTriggered.current = true;
-      appendMessage({
-        id: Math.random().toString(36).substring(7),
-        role: 'user',
-        content: `I want to learn about: ${topic}`,
+      import('@copilotkit/runtime-client-gql').then(({ TextMessage }) => {
+        appendMessage(new TextMessage({
+          id: Math.random().toString(36).substring(7),
+          role: 'user',
+          content: `I want to learn about: ${topic}`,
+        }));
       });
     }
   }, [searchParams, appendMessage]);
@@ -57,7 +59,7 @@ export default function DashboardClient() {
       </div>
 
       <CopilotPopup
-        agent="default"
+        agent="neuroplay_agent"
         instructions="You are NeuroPlay AI, an advanced gamified learning agent. You teach any topic by generating Generative UI (A2UI) schemas."
         defaultOpen={true}
         labels={{

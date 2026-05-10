@@ -20,7 +20,7 @@ class A2UISchema(BaseModel):
 def get_llm():
     # langchain-google-genai uses GOOGLE_API_KEY by default, but we'll manually pass it if it's GEMINI_API_KEY
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    return ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=api_key)
+    return ChatGoogleGenerativeAI(model="gemini-3-flash-preview", google_api_key=api_key)
 
 def analytics_node(state: AgentState):
     """Analyzes the latest interaction and updates user level/history."""
@@ -41,8 +41,12 @@ def analytics_node(state: AgentState):
     Respond ONLY with the level as a single word."""
     
     try:
-        response = llm.invoke([SystemMessage(content=system_prompt), HumanMessage(content=last_message)])
-        new_level = response.content.strip().lower()
+        response = llm.invoke([SystemMessage(content=system_prompt), HumanMessage(content=str(last_message))])
+        
+        # Handle cases where response.content is a list (e.g., multimodal or block formatting)
+        content_str = response.content[0]["text"] if isinstance(response.content, list) else str(response.content)
+        new_level = content_str.strip().lower()
+        
         if new_level not in ['beginner', 'intermediate', 'advanced']:
             new_level = user_level
     except Exception as e:
@@ -61,6 +65,8 @@ def learning_node(state: AgentState):
     user_level = state.get("user_level", "beginner")
     messages = state.get("messages", [])
     
+    from langchain_core.messages import AIMessage
+    
     llm = get_llm()
     system_prompt = f"""You are the Learning Agent. You teach {topic} to a {user_level} student.
     Based on the latest message, write a short, engaging response explaining the concept or asking a question.
@@ -68,8 +74,12 @@ def learning_node(state: AgentState):
     
     try:
         if messages:
-            response = llm.invoke([SystemMessage(content=system_prompt)] + messages[-1:])
-            teaching_content = response.content
+            # Safely get the last message and ensure it's properly formatted for the LLM
+            last_msg = messages[-1]
+            response = llm.invoke([SystemMessage(content=system_prompt), last_msg])
+            
+            # Handle cases where response.content might be a list
+            teaching_content = response.content[0]["text"] if isinstance(response.content, list) else str(response.content)
         else:
             teaching_content = f"Welcome! What would you like to learn about {topic}?"
     except Exception as e:
@@ -77,7 +87,8 @@ def learning_node(state: AgentState):
         teaching_content = "I'm having trouble connecting right now, but let's keep learning!"
         
     # We append the agent's teaching message to the messages list so the frontend CopilotKit sees it
-    return {"messages": [teaching_content]}
+    # Crucially, it must be an AIMessage object, not a raw string!
+    return {"messages": [AIMessage(content=teaching_content)]}
 
 
 def gamification_node(state: AgentState):
